@@ -395,3 +395,218 @@ scrollTopBtn.addEventListener('click', () => {
     behavior: 'smooth'
   });
 });
+
+// =====================================================
+// STEP 7: ENHANCED INTERACTIONS & ANIMATIONS
+// =====================================================
+
+// Lazy Loading Images
+if ('IntersectionObserver' in window) {
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src || img.src;
+        img.classList.add('loaded');
+        observer.unobserve(img);
+      }
+    });
+  });
+
+  document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+    imageObserver.observe(img);
+  });
+}
+
+// Enhanced Cart Count Animation
+function updateCartCount() {
+  const count = cartItems.length;
+  cartCount.textContent = count;
+  
+  if (count > 0) {
+    cartCount.style.animation = 'none';
+    setTimeout(() => {
+      cartCount.style.animation = 'pulse 0.5s ease';
+    }, 10);
+  }
+}
+
+// Smooth Reveal on Scroll for Elements
+const revealElements = document.querySelectorAll('.service-card, .menu-card, .testimonial-card, .pricing-card, .info-card');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+revealElements.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(30px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  revealObserver.observe(el);
+});
+
+// Parallax Effect for Hero and Statistics
+function parallaxEffect() {
+  const scrolled = window.pageYOffset;
+  const parallaxElements = document.querySelectorAll('.hero, .statistics');
+  
+  parallaxElements.forEach(el => {
+    const speed = 0.5;
+    el.style.backgroundPositionY = -(scrolled * speed) + 'px';
+  });
+}
+
+if (window.innerWidth > 768) {
+  window.addEventListener('scroll', parallaxEffect);
+}
+
+// Navbar Background Blur on Scroll
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  if (window.scrollY > 50) {
+    navbar.style.backdropFilter = 'blur(10px)';
+    navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+  } else {
+    navbar.style.backdropFilter = 'none';
+    navbar.style.backgroundColor = 'transparent';
+  }
+});
+
+// Add Ripple Effect to Buttons
+function createRipple(event) {
+  const button = event.currentTarget;
+  const ripple = document.createElement('span');
+  const diameter = Math.max(button.clientWidth, button.clientHeight);
+  const radius = diameter / 2;
+
+  ripple.style.width = ripple.style.height = `${diameter}px`;
+  ripple.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+  ripple.style.top = `${event.clientY - button.offsetTop - radius}px`;
+  ripple.classList.add('ripple');
+
+  const existingRipple = button.getElementsByClassName('ripple')[0];
+  if (existingRipple) {
+    existingRipple.remove();
+  }
+
+  button.appendChild(ripple);
+}
+
+document.querySelectorAll('.btn, .btn-add-cart, .tab-btn').forEach(button => {
+  button.addEventListener('click', createRipple);
+});
+
+// Touch Swipe for Mobile Menu Tabs
+const menuTabsContainer = document.querySelector('.menu-tabs');
+if (menuTabsContainer && window.innerWidth <= 768) {
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  menuTabsContainer.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - menuTabsContainer.offsetLeft;
+    scrollLeft = menuTabsContainer.scrollLeft;
+  });
+
+  menuTabsContainer.addEventListener('mouseleave', () => {
+    isDown = false;
+  });
+
+  menuTabsContainer.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  menuTabsContainer.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - menuTabsContainer.offsetLeft;
+    const walk = (x - startX) * 2;
+    menuTabsContainer.scrollLeft = scrollLeft - walk;
+  });
+}
+
+// Performance Monitoring
+window.addEventListener('load', () => {
+  if ('performance' in window) {
+    const perfData = performance.timing;
+    const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+    console.log(`%c⚡ Page Load Time: ${pageLoadTime}ms`, 'color: #10b981; font-weight: bold; font-size: 14px;');
+  }
+});
+
+// Disable Right Click on Images (Optional - can be removed if not needed)
+// document.querySelectorAll('img').forEach(img => {
+//   img.addEventListener('contextmenu', (e) => e.preventDefault());
+// });
+
+// Add to Cart with Animation
+document.querySelectorAll('.btn-add-cart').forEach(button => {
+  button.addEventListener('click', function(e) {
+    // Visual feedback with icon change
+    const originalHTML = this.innerHTML;
+    this.innerHTML = '<i class="fas fa-check"></i> Added!';
+    this.style.background = '#10b981';
+    
+    // Create floating animation
+    const rect = this.getBoundingClientRect();
+    const floatingIcon = document.createElement('div');
+    floatingIcon.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+    floatingIcon.style.cssText = `
+      position: fixed;
+      left: ${rect.left}px;
+      top: ${rect.top}px;
+      font-size: 24px;
+      color: var(--primary);
+      pointer-events: none;
+      z-index: 9999;
+      animation: floatToCart 1s ease-out forwards;
+    `;
+    document.body.appendChild(floatingIcon);
+    
+    setTimeout(() => {
+      floatingIcon.remove();
+    }, 1000);
+    
+    setTimeout(() => {
+      this.innerHTML = originalHTML;
+      this.style.background = '';
+    }, 1500);
+  });
+});
+
+// Add CSS for floating animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes floatToCart {
+    to {
+      transform: translateY(-100px) scale(0);
+      opacity: 0;
+    }
+  }
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: rippleEffect 0.6s ease-out;
+    pointer-events: none;
+  }
+  @keyframes rippleEffect {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(style);
+
+console.log('%c🎨 All animations and interactions loaded successfully!', 'color: #ff6b35; font-weight: bold; font-size: 14px;');
