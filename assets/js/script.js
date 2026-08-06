@@ -258,3 +258,49 @@ if (btnCheckout) {
     }
   });
 }
+
+// =====================================================
+// STATISTICS COUNTER ANIMATION
+// =====================================================
+const statNumbers = document.querySelectorAll('.stat-number');
+let counterStarted = false;
+
+function animateCounter(element) {
+  const target = parseInt(element.getAttribute('data-target'));
+  const duration = 2000; // 2 seconds
+  const increment = target / (duration / 16); // 60fps
+  let current = 0;
+
+  const updateCounter = () => {
+    current += increment;
+    
+    if (current < target) {
+      element.textContent = Math.floor(current).toLocaleString();
+      requestAnimationFrame(updateCounter);
+    } else {
+      element.textContent = target.toLocaleString();
+    }
+  };
+
+  updateCounter();
+}
+
+// Intersection Observer for Statistics
+const statsSection = document.querySelector('.statistics');
+
+if (statsSection) {
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !counterStarted) {
+        counterStarted = true;
+        statNumbers.forEach(stat => {
+          animateCounter(stat);
+        });
+      }
+    });
+  }, {
+    threshold: 0.5
+  });
+
+  statsObserver.observe(statsSection);
+}
