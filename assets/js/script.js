@@ -339,3 +339,59 @@ pricingButtons.forEach(button => {
     alert(`You selected the ${plan}!\n\nThis feature will redirect to the subscription page. Thank you for choosing Food Paradise!`);
   });
 });
+
+// =====================================================
+// CONTACT FORM
+// =====================================================
+const contactForm = document.getElementById('contact-form');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    
+    alert(`Thank you, ${name}!\n\nYour message has been received. We'll get back to you at ${email} as soon as possible.`);
+    
+    contactForm.reset();
+  });
+}
+
+// =====================================================
+// NEWSLETTER FORM
+// =====================================================
+const newsletterForm = document.getElementById('newsletter-form');
+
+if (newsletterForm) {
+  newsletterForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const email = newsletterForm.querySelector('input[type="email"]').value;
+    
+    alert(`Success!\n\nThank you for subscribing to our newsletter. We've sent a confirmation email to ${email}.`);
+    
+    newsletterForm.reset();
+  });
+}
+
+// =====================================================
+// SCROLL TO TOP BUTTON
+// =====================================================
+const scrollTopBtn = document.getElementById('scroll-top');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 300) {
+    scrollTopBtn.classList.add('show');
+  } else {
+    scrollTopBtn.classList.remove('show');
+  }
+});
+
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
