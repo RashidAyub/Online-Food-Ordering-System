@@ -304,3 +304,38 @@ if (statsSection) {
 
   statsObserver.observe(statsSection);
 }
+
+// =====================================================
+// FAQ ACCORDION
+// =====================================================
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+  const question = item.querySelector('.faq-question');
+  
+  question.addEventListener('click', () => {
+    const isActive = item.classList.contains('active');
+    
+    // Close all FAQ items
+    faqItems.forEach(faqItem => {
+      faqItem.classList.remove('active');
+    });
+    
+    // Open clicked item if it wasn't active
+    if (!isActive) {
+      item.classList.add('active');
+    }
+  });
+});
+
+// =====================================================
+// PRICING BUTTON HANDLERS
+// =====================================================
+const pricingButtons = document.querySelectorAll('.pricing-btn');
+
+pricingButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const plan = button.closest('.pricing-card').querySelector('h3').textContent;
+    alert(`You selected the ${plan}!\n\nThis feature will redirect to the subscription page. Thank you for choosing Food Paradise!`);
+  });
+});
